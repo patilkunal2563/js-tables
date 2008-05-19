@@ -32,7 +32,7 @@
                     html.push("</thead></table>");
                     id.html(html.join(""));
                     setTimeout(function() {
-                        $header = id.find("table:first").find("input").keyup(searchlater).css("width", "90%");
+                        $header = id.find("table:first").find("input").keyup(searchlater).css("width", "100%");
                         $results = $("<div></div>").appendTo(id);
                         search();
                     });
