@@ -3,6 +3,8 @@
 = Show an interactive table with filters =
 
 {{{
+<script src="jquery.table.js"></script>
+<script>
 var data = [
   [ "Tag", "Count" ],
   [ "DIV", 100     ],
@@ -17,7 +19,7 @@ jQuery("div#table").table(data);
 jQuery.get(csvfile, function(data) {
     jQuery("div#table").table(jQuery.csv()(data));
 });
-
+</script>
 }}}
 
 The table displayed can be filtered using regular expressions.
