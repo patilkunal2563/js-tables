@@ -1,3 +1,5 @@
+#summary Show an interactive table with filters
+
 = Show an interactive table with filters =
 
 {{{
