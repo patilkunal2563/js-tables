@@ -1,12 +1,19 @@
-#summary Convert CSV data into a Javascript array of arrays
+= Convert CSV data into arrays =
 
-= Introduction =
-
-jquery.csv.js is a JavaScript plugin that converts CSV data into arrays.
+{{{
+<script src="jquery.csv.js"></script>
+<script>
+var string = "1,2,3\n4,5,6\n7,8,9\n";
+var result = jQuery.csv()(string); // = [ [1,2,3], [4,5,6], [7,8,9] ]
+</script>
+}}}
 
 = Usage =
-{{{
-var string = "1,2,3\n4,5,6\n7,8,9\n";
-var reader = jQuery.csv();
-reader(string) // = [ [1,2,3], [4,5,6], [7,8,9] ]
-}}}
+`var reader = jQuery.csv()` returns a CSV reader
+
+Parameters: `jQuery.csv(delim, quote, linedelim)`
+|| delim || column delimiter || Comma by default. Use "\t" for tab delimited files. Use "\t,\|" to use any of TAB, comma or pipe ||
+|| quote || quote character  || Double quote by default. Use "'\"" for either single or double quote ||
+|| linedelim || row delimiter || "\r\n" by default. Use "\r\n\|" to specify any of "\r", "\n" or pipe ||
+
+`reader(csv_string)` returns an array of arrays based on the CSV string.
