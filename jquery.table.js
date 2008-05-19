@@ -20,7 +20,7 @@
                 $header, $results, html, shown, filter, next, re,
                 header = array[0].slice(0,array[0].length);
                 col = header.length;
-            for (var j=0; j<col; j++) { header[j].replace(/\s/g, "_"); }
+            for (var j=0; j<col; j++) { header[j] = header[j].replace(/\s/g, "_"); }
 
             function searchlater() { return search.later(200); }    // If anyone types a new character within a few milliseconds, cancel the earlier search and use the new one.
             function getval() { return $(this).val(); }             // Gets the value of an input.
