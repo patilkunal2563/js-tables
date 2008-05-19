@@ -16,8 +16,8 @@
 </head><body>
 <div id="table"></div>
 <script src="http://jqueryjs.googlecode.com/files/jquery-1.2.4.min.js"></script>
-<script src="jquery.csv.js"></script>
-<script src="jquery.table.js"></script>
+<script src="http://js-tables.googlecode.com/svn/trunk/jquery.csv.js"></script>
+<script src="http://js-tables.googlecode.com/svn/trunk/jquery.table.js"></script>
 <script>
 jQuery.get("tokens.csv", function(data) {
     jQuery("#table").table(jQuery.csv()(data));
