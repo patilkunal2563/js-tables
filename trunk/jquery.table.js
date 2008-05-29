@@ -56,7 +56,7 @@
 
                         // Check if the row matches the filter.
                         for (var j=0; j<col; j++) {
-                            if (!(matches[j] ? matches[j](row[j] || "", re[j], param[j]) : (row[j] || "").match(re[j]))) {
+                            if (!(matches[j] ? matches[j](row[j] || "", re[j], filter[j]) : (row[j] || "").match(re[j]))) {
                                 continue ROWS;
                             }
                         }
@@ -85,7 +85,7 @@
             }
 
             // Create the header
-            for (var j=0; j<col; j++) { header[j] = header[j].replace(/\s/g, "_"); }
+            for (var j=0; j<col; j++) { header[j] = header[j].trim().replace(/\s/g, "_"); }
             var id = this.eq(0).css("table-layout", "fixed").html("");
             var html = ["<table><thead>"];
             for (var row=array[0],j=0,lj=row.length; j<lj; j++) { html.push("<th class='", header[j], "'>", row[j], "<br/><input/></th>"); }
@@ -96,7 +96,7 @@
             $(window).scroll(function(e) {
                 var scrollX = window.pageYOffset || document.documentElement && document.documentElement.scrollTop    || document.body.scrollTop || 0,
                     height  = window.innerHeight || document.documentElement && document.documentElement.clientHeight || document.body.clientHeight || 0;
-                if (scrollX + height > id.offset().top + id.height()) { search(1); }
+                if (scrollX + height + 100 >= id.offset().top + id.height()) { search(1); }
             });
 
             search();
