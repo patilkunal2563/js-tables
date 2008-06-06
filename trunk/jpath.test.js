@@ -1,4 +1,4 @@
-// java -jar ..\rhino\js.jar test.js
+// rhino jpath.test.js
 
 load("jpath.js");
 
