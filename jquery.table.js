@@ -103,8 +103,8 @@
 
             /* Sort */
             function sort(elem) {
-                var cls = $(elem).parent().attr("class"),
-                    col = +cls.match(/col(\d+)/)[1],
+                var cls = $(elem).attr("class"),
+                    col = $(elem).parent().attr("class").match(/col(\d+)/)[1],
                     num = colIsNumber[col];
                 array.sort(
                     cls.match(/desc/) ? ( num ? function(a,b) { a = +a[col]; b = +b[col]; return a < b ? 1 : a > b ? -1 : 0; }
