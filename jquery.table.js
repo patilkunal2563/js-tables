@@ -6,8 +6,11 @@
         display   = array of function(value) for each column
     TODO:
         sort      = array of function(a,b) for each column to sort by
+    TODO CSS:
+        constant width
+        right-align numerical columns
 
-    Bugs: sort not working OK, clicking on dropdown should select it, dropdowns look ugly
+    Bugs: dropdowns look ugly
  */
 
 (function($) {
@@ -19,9 +22,14 @@
         if (f._timeout_id) { clearTimeout(f._timeout_id); }
         if (ms > 0) { f._timeout_id = setTimeout( function () { f.apply(obj, args); }, ms); }
     };
+    Function.prototype.clear = function() {
+        if (this._timeout_id) { clearTimeout(this._timeout_id); this._timeout_id = 0; }
+    };
 
     /* http://blog.stevenlevithan.com/archives/faster-trim-javascript */
-    String.prototype.trim = function() { return this.replace(/^\s\s*/, "").replace(/\s\s*$/, ""); };
+    if (!String.prototype.trim) {
+        String.prototype.trim = function() { return this.replace(/^\s\s*/, "").replace(/\s\s*$/, ""); };
+    }
 
     $.fn.extend({
         table: function(array, options) {
@@ -31,7 +39,8 @@
                 next,               // Next data row to search in
                 lastfilter,         // Array of parameters in $header last time search was called
                 re,                 // Regular expressions of lastfilter (cached)
-                $suggest;           // Drop-down suggesting values
+                $suggest,           // Drop-down suggesting values
+                suggestelem;        // Element on which dropdown was last invoked
 
             var header    = array[0].slice(0,array[0].length),
                 cols      = header.length,
@@ -104,7 +113,7 @@
             /* Sort */
             function sort(elem) {
                 var cls = $(elem).attr("class"),
-                    col = $(elem).parent().attr("class").match(/col(\d+)/)[1],
+                    col = $(elem).parent().attr("class").match(/col(\d\d*)/)[1],
                     num = colIsNumber[col];
                 array.sort(
                     cls.match(/desc/) ? ( num ? function(a,b) { a = +a[col]; b = +b[col]; return a < b ? 1 : a > b ? -1 : 0; }
@@ -116,11 +125,17 @@
 
             /* Suggest top values for a column */
             function suggest(elem) {
-                var cls  = $(elem).parent().attr("class"),
-                    col  = +cls.match(/col(\d+)/)[1],
+                suggestelem = $(elem);
+                var cls  = suggestelem.parent().attr("class"),
+                    col  = +cls.match(/col(\d\d*)/)[1],
                     pos  = $header.eq(col).position(),
                     h    = $header.eq(col).height();
                 $suggest.css({left: pos.left + 'px', top: (pos.top + h + 2) + 'px'}).html(freqhtml[col]).show();
+            }
+
+            function unsuggest() {
+                suggestelem = undefined;
+                $suggest.hide();
             }
 
             /* Create header and body */
@@ -142,9 +157,13 @@
                     .end()
                     .find("input")
                         .css("width", "100%")
-                        .keyup(function () { search.later(200); $suggest.hide.later(200, $suggest); })
-                        .focus(function (e) { suggest.later(1500, window, this); })
-                        .blur(function() { $suggest.hide.later(200, $suggest); });
+                        .keypress(function (e) {
+                            suggest.clear();
+                            if (e.keyCode == 40) { suggest(this); }
+                            else { unsuggest(); search.later(200); }
+                        })
+                        .focus(function (e) { suggest.later(2000, window, this); })
+                        .blur(function() { unsuggest.later(200); });
 
                 array.shift();                              // Remove the header row. Don't want it interfering with sort.
                 $results = $("<div></div>").appendTo(id);   // Create the results placeholder and search
@@ -166,7 +185,7 @@
                     }
                 }
                 vals.sort(function(a,b) { a = f[a]; b = f[b]; return a < b ? 1 : a > b ? -1 : 0; });
-                freqhtml[col] = vals.slice(0, freqshow).join('<br/>');
+                freqhtml[col] = '<div>' + vals.slice(0, freqshow).join('</div><div>') + '</div>';
                 colIsNumber[col] = colIsNumber[col] == -1 ? false : true;
             }
 
@@ -177,7 +196,17 @@
             search(-1);
 
 
-            $suggest = $('<div></div>').css({position:'absolute', border:'1px solid #ccc', 'background-color':'#fff', padding: '0 5px'}).appendTo(document.body).hide();
+            $suggest = $('<div></div>')
+                .css({position:'absolute', border:'1px solid #ccc', 'background-color':'#fff', padding: '0 5px'})
+                .appendTo(document.body)
+                .click(function(e) {        // If user clicks on suggestion, search for it
+                    if (suggestelem) {
+                        suggestelem.val($(e.target).text());
+                        search();
+                    }
+                    unsuggest();
+                })
+                .hide();
 
             // Scrolling will continue the search. If you have multiple tables, it'll continue ALL the searches, but that's OK.
             $(window).scroll(function(e) {
