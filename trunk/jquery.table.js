@@ -39,6 +39,7 @@
                 next,               // Next data row to search in
                 lastfilter,         // Array of parameters in $header last time search was called
                 re,                 // Regular expressions of lastfilter (cached)
+                hide,               // Whether to hide matching values or show matching values. Based on whether first char of filter is ! or not
                 $suggest,           // Drop-down suggesting values
                 suggestelem;        // Element on which dropdown was last invoked
 
@@ -74,17 +75,20 @@
                     lastfilter = filter;
                     shown = next = 0;
                     re = [];
-                    for (var j=0; j<cols; j++) { re[j] = new RegExp(filter[j].trim(), "i"); }
+                    hide = [];
+                    for (var j=0; j<cols; j++) {
+                        if (filter[j].charAt(0) == '!') { hide[j] = 1; re[j] = new RegExp(filter[j].substr(1).trim(), "i"); }
+                        else                            { hide[j] = 0; re[j] = new RegExp(filter[j].trim(), "i"); }
+                    }
                 }
 
                 if (restart || extend) {
                     var html = ["<table><tbody>"];
                     ROWS: for (var i=next, shownnow=0, row; row = array[i]; i++) {
-                        // Skip row if it doesn't match the filter.
+                        // Skip row if it doesn't match the filter (or matches the filter, and we want to hide those rows)
                         for (var j=0; j<cols; j++) {
-                            if (!(matches[j] ? matches[j](row[j] || "", re[j], filter[j]) : (row[j] || "").match(re[j]))) {
-                                continue ROWS;
-                            }
+                            var match = matches[j] ? matches[j](row[j] || "", re[j], filter[j]) : (row[j] || "").match(re[j]);
+                            if (hide[j] ? match : !match) { continue ROWS; }
                         }
 
                         // If it does, display the row.
@@ -128,7 +132,7 @@
                 suggestelem = $(elem);
                 var cls  = suggestelem.parent().attr("class"),
                     col  = +cls.match(/col(\d\d*)/)[1],
-                    pos  = $header.eq(col).position(),
+                    pos  = $header.eq(col).offset(),
                     h    = $header.eq(col).height();
                 $suggest.css({left: pos.left + 'px', top: (pos.top + h + 2) + 'px'}).html(freqhtml[col]).show();
             }
@@ -144,8 +148,10 @@
                 var html = ["<table><thead>"];
                 for (var row=array[0],j=0,lj=row.length; j<lj; j++) {
                     html.push("<th class='", header[j], " col", j, "'>", row[j], " ",
-                        "<span class='sort asc'>&#9652;</span>",
-                        "<span class='sort desc'>&#9662;</span>",
+                        "<span class='sort asc' title='sort ascending'>&#916;</span>",
+                        "<span class='sort desc' title='sort descending'>&#8711;</span>",
+                        // "<span class='sort asc' title='sort ascending'>&#9652;</span>",
+                        // "<span class='sort desc' title='sort descending'>&#9662;</span>",
                         "<br/><input></input></th>");
                 }
                 html.push("</thead></table>");
@@ -156,7 +162,7 @@
                         .css({cursor: 'pointer'})
                     .end()
                     .find("input")
-                        .css("width", "100%")
+                        .css("width", "95%")
                         .keypress(function (e) {
                             suggest.clear();
                             if (e.keyCode == 40) { suggest(this); }
@@ -185,7 +191,11 @@
                     }
                 }
                 vals.sort(function(a,b) { a = f[a]; b = f[b]; return a < b ? 1 : a > b ? -1 : 0; });
-                freqhtml[col] = '<div>' + vals.slice(0, freqshow).join('</div><div>') + '</div>';
+                for (var html=[],i=0, l=vals.length, max=f[vals[0]] || 1; i<freqshow && i<l; i++) {
+                    var w = Math.round(f[vals[i]] / max * 100);
+                    html.push('<div>', vals[i], '</div>');
+                }
+                freqhtml[col] = html.join('');
                 colIsNumber[col] = colIsNumber[col] == -1 ? false : true;
             }
 
