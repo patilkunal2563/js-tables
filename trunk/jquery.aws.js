@@ -10,9 +10,6 @@
     Requires jquery.pipes.js for $.getXML()
 */
 
-var cache = {};
-
-
 (function($) {
     var endpoints = {
         'US': 'ecs.amazonaws.com',
