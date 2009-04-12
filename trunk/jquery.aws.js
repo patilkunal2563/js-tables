@@ -79,7 +79,8 @@
             return function(params, callback) {
                 var url = [];
                 for (var key in params) { if (params.hasOwnProperty(key)) {
-                    url.push(euc(key) + "=" + euc(params[key]));
+                    // url.push(euc(key) + "=" + euc(params[key]));
+                    url.push(key + "=" + params[key]);
                 } }
 
                 url = base + '&' + url.sort().join('&');
