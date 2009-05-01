@@ -13,7 +13,7 @@
 (function($) {
     var endpoints = {
         'US': 'ecs.amazonaws.com',
-        'UK': 'aws.amazonaws.co.uk',
+        'UK': 'ecs.amazonaws.co.uk',
         'JP': 'aws.amazonaws.jp',
         'FR': 'aws.amazonaws.fr',
         'DE': 'aws.amazonaws.de',
