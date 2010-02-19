@@ -5,7 +5,7 @@
  *  jQuery.csv("\t", "'\"")(tsvtext)    uses single & double quotes as the quote character
  *  Note: Use jQuery.csv(delim, 0) to speed up loading, if there are no quotes. Use with care: there might be quotes
  *
- *  jQuery.csv2json(csvtext)            returns an array of hashes, whose keys are from the header row.
+ *  jQuery.csv2json()(csvtext)          returns an array of hashes, whose keys are from the header row.
  *                                      Otherwise, syntax identical to jQuery.csv()
  */
 

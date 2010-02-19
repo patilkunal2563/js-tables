@@ -148,8 +148,8 @@
                 var html = ["<table><thead>"];
                 for (var row=array[0],j=0,lj=row.length; j<lj; j++) {
                     html.push("<th class='", header[j], " col", j, "'>", row[j], " ",
-                        "<span class='sort asc' title='sort ascending'>&#916;</span>",
-                        "<span class='sort desc' title='sort descending'>&#8711;</span>",
+                        "<span class='sort asc' title='sort ascending'>&#x25b2;</span>",
+                        "<span class='sort desc' title='sort descending'>&#x25bc;</span>",
                         // "<span class='sort asc' title='sort ascending'>&#9652;</span>",
                         // "<span class='sort desc' title='sort descending'>&#9662;</span>",
                         "<br/><input></input></th>");
