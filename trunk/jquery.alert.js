@@ -1,6 +1,6 @@
 /*  Transparent alerts
     By S Anand <http://www.s-anand.net/>
-    WTFPL
+    Licensed under the WTFPL (http://sam.zoy.org/wtfpl/)
     http://js-tables.googlecode.com/
 
     Usage: jQuery.alert("Hello world");
@@ -58,7 +58,7 @@ $.alert = (function() {
     return function(text) {
         message.stop(true, true).show();
         clearTimeout(hideTimer);
-        $('<p>').css(messageCSS).html(text).hide().prependTo(message).slideDown(slideDownDelay, function() { hideTimer = 0; });
+        $('<p>').css(messageCSS).html('' + text).prependTo(message).hide().slideDown(slideDownDelay, function() { hideTimer = 0; });
         $('p:gt(2)', message).hide();
         $('p:eq(1)', message).css('opacity', '0.6');
         $('p:eq(2)', message).css('opacity', '0.3');
