@@ -1,6 +1,7 @@
 /*  Usage: $(selector).table(array, options)
     Creates a table inside the first element matched by selector, displaying contents of the array of arrays
     Options:
+        noscroll  = don't scroll when user get's to bottom of the window
         maxshow   = number of rows to display per search
         matches   = array of function(value, regexp, searchfilter) for each column
         display   = array of function(value) for each column
@@ -47,6 +48,7 @@
                 cols      = header.length,
                 rows      = array.length - 1,
                 getval    = function () { return $(this).val(); },
+                noscroll  = (options && options.noscroll ) || 0,    // Disable scroll at the bottom of the window
                 matches   = (options && options.matches  ) || [],   // Array of fns that match a cell
                 display   = (options && options.display  ) || [],   // Array of fns that show a cell
                 maxshow   = (options && options.maxshow  ) || 100,  // Max rows to display per
@@ -87,7 +89,7 @@
                     ROWS: for (var i=next, shownnow=0, row; row = array[i]; i++) {
                         // Skip row if it doesn't match the filter (or matches the filter, and we want to hide those rows)
                         for (var j=0; j<cols; j++) {
-                            var match = matches[j] ? matches[j](row[j] || "", re[j], filter[j]) : (row[j] || "").match(re[j]);
+                            var match = matches[j] ? matches[j](''+row[j] || "", re[j], filter[j]) : (''+row[j] || "").match(re[j]);
                             if (hide[j] ? match : !match) { continue ROWS; }
                         }
 
@@ -163,7 +165,7 @@
                     .end()
                     .find("input")
                         .css("width", "95%")
-                        .keypress(function (e) {
+                        .keyup(function (e) {               // Use keyup to detect backspaces that clear the field. keypress won't do this.
                             suggest.clear();
                             if (e.keyCode == 40) { suggest(this); }
                             else { unsuggest(); search.later(200); }
@@ -219,11 +221,13 @@
                 .hide();
 
             // Scrolling will continue the search. If you have multiple tables, it'll continue ALL the searches, but that's OK.
-            $(window).scroll(function(e) {
-                var scrollX = window.pageYOffset || document.documentElement && document.documentElement.scrollTop    || document.body.scrollTop || 0,
-                    height  = window.innerHeight || document.documentElement && document.documentElement.clientHeight || document.body.clientHeight || 0;
-                if (scrollX + height + 100 >= id.offset().top + id.height()) { search(1); }
-            });
+            if (!noscroll) {
+                $(window).scroll(function(e) {
+                    var scrollX = window.pageYOffset || document.documentElement && document.documentElement.scrollTop    || document.body.scrollTop || 0,
+                        height  = window.innerHeight || document.documentElement && document.documentElement.clientHeight || document.body.clientHeight || 0;
+                    if (scrollX + height + 100 >= id.offset().top + id.height()) { search(1); }
+                });
+            }
 
             return this;
         }
