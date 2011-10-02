@@ -44,7 +44,8 @@
                 $suggest,           // Drop-down suggesting values
                 suggestelem;        // Element on which dropdown was last invoked
 
-            var header    = array[0].slice(0,array[0].length),
+            var id = this,
+                header    = array[0].slice(0,array[0].length),
                 cols      = header.length,
                 rows      = array.length - 1,
                 getval    = function () { return $(this).val(); },
@@ -74,6 +75,7 @@
                 var extend  = (option == 1);
 
                 if (restart) {
+                    id.trigger('change', [filter]);
                     lastfilter = filter;
                     shown = next = 0;
                     re = [];
@@ -201,8 +203,7 @@
                 colIsNumber[col] = colIsNumber[col] == -1 ? false : true;
             }
 
-            var id = this.eq(0).html("")
-                .css("table-layout", "fixed");      // Force fixed layout, otherwise column alignment will go for a toss.
+            id.eq(0).html("").css("table-layout", "fixed");      // Force fixed layout, otherwise column alignment will go for a toss.
             addheader(id);
             for (var j=0; j<cols; j++) { analyse(j, true); }
             search(-1);
